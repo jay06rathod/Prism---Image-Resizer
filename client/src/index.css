@@ -58,7 +58,7 @@ body {
 }
 
 html, body, #root {
-  max-width: none !important;
+  max-width: none !important; 
   width: 100%;
   margin: 0;
   padding: 0;
