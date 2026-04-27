@@ -56,6 +56,7 @@ body {
   margin: 0;
   font-family: 'Sono', sans-serif;
 }
+
 html, body, #root {
   max-width: none !important; 
   width: 100%;
@@ -223,4 +224,15 @@ code {
        url('./assets/fonts/struggle-italic.woff') format('woff');
   font-weight: normal;
   font-style: italic;
+}
+
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
