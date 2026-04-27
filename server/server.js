@@ -1,4 +1,6 @@
 require('dotenv').config({ path: '../.env' })
+const { GetObjectCommand } = require('@aws-sdk/client-s3')
+const { Readable } = require('stream')
 
 const express = require('express')
 const app = express()
@@ -27,6 +29,7 @@ app.get('/', (req, res) => {
 
 // Upload route
 app.post('/api/upload', upload.single('image'), async (req, res) => {
+  console.log("BUCKET:", process.env.S3_BUCKET)
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No file uploaded' })
@@ -90,12 +93,40 @@ app.post('/api/upload', upload.single('image'), async (req, res) => {
         thumbnail: `thumb-${baseName}.webp`,
         medium: `medium-${baseName}.webp`,
         large: `large-${baseName}.webp`
+      },
+      sizes: {
+        original: file.size,
+        thumbnail: thumbnail.length,
+        medium: medium.length,
+        large: large.length,
       }
     })
 
   } catch (err) {
     console.log(err)
-    res.status(500).json({ error: 'Upload Failed' })
+    res.status(500).json({ error: 'Upload Failed', detail: err.message })
+  }
+})
+
+app.get('/api/download', async (req, res) => {
+  const { key } = req.query
+  if (!key) return res.status(400).json({ error: 'No key provided' })
+
+  try {
+    const command = new GetObjectCommand({
+      Bucket: process.env.S3_BUCKET,
+      Key: key,
+    })
+
+    const s3Response = await s3.send(command)
+
+    res.setHeader('Content-Disposition', `attachment; filename="${key}"`)
+    res.setHeader('Content-Type', 'image/webp')
+
+    Readable.from(s3Response.Body).pipe(res)
+  } catch (err) {
+    console.log(err)
+    res.status(500).json({ error: 'Download failed' })
   }
 })
 

@@ -56,7 +56,6 @@ body {
   margin: 0;
   font-family: 'Sono', sans-serif;
 }
-
 html, body, #root {
   max-width: none !important; 
   width: 100%;

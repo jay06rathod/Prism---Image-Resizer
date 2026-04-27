@@ -1,4 +1,11 @@
-export default function PreviewSection({ originalImage, resizedImage, isProcessing }) {
+function formatSize(bytes) {
+  if (!bytes) return '';
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+export default function PreviewSection({ originalImage, resizedImage, isProcessing, sizeInfo  }) {
   return (
     <div className="flex justify-between items-center gap-4 mt-6">
 
@@ -18,6 +25,9 @@ export default function PreviewSection({ originalImage, resizedImage, isProcessi
 
         </div>
         <span className="text-xs text-white/50 mt-2">Original</span>
+        {sizeInfo && (
+          <span className="text-xs text-white/30">{formatSize(sizeInfo.original)}</span>
+        )}
       </div>
 
       {/* Divider */}
@@ -48,14 +58,19 @@ export default function PreviewSection({ originalImage, resizedImage, isProcessi
 
         </div>
         <span className="text-xs text-white/50 mt-2">Optimized</span>
+          {sizeInfo && !isProcessing && (
+            <span className="text-xs text-white/30">{formatSize(sizeInfo.large)}</span>
+          )}
         {resizedImage && !isProcessing && (
-        <a
-          href={resizedImage}
-          download
+        <button
+          onClick={() => {
+            const key = resizedImage.split('.amazonaws.com/')[1]
+            window.open(`http://localhost:5000/api/download?key=${key}`, '_blank')
+          }}
           className="mt-2 text-xs text-blue-400 hover:text-blue-300 transition"
         >
           Download
-        </a>
+        </button>
       )}
       </div>
 

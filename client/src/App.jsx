@@ -13,6 +13,7 @@ export default function App() {
   const [processing, setProcessing] = useState(false);
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [sizeInfo, setSizeInfo] = useState(null);
 
   // Button click → fake processing
 const handleProcess = async () => {
@@ -31,11 +32,19 @@ const handleProcess = async () => {
     });
 
     const data = await res.json();
+    console.log("Full response:", data);
+    if (!res.ok) throw new Error(data.detail || 'Server error');
+    setSizeInfo({
+      original: file.size,
+      large: data.sizes.large,
+      medium: data.sizes.medium,
+      thumbnail: data.sizes.thumbnail,
+    });
 
     console.log(data);
 
     // 🔥 IMPORTANT: update this URL
-    const baseUrl = "https://prism-image-uploads.s3.ap-south-1.amazonaws.com/";
+    const baseUrl = "https://prism-resizer.s3.ap-south-1.amazonaws.com/";
 
     setResized(baseUrl + data.files.large);
 
@@ -79,7 +88,8 @@ const handleProcess = async () => {
             <PreviewSection 
               originalImage={original} 
               resizedImage={resized} 
-              isProcessing={processing} 
+              isProcessing={processing}
+              sizeInfo={sizeInfo}
             />
 
           </div>
