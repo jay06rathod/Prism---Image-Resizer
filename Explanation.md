@@ -579,7 +579,7 @@ Similarly, the API base URL is hardcoded as `http://localhost:5000` in both `App
 User opens app in browser
         │
         ▼
-AnimatedGradientBg renders ornamental background
+AnimatingBG renders ornamental background
         │
         ▼
 UploadZone displayed
